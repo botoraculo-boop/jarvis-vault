@@ -11,7 +11,7 @@ Environment=HOME=/home/jarvis
 WorkingDirectory=/home/jarvis/JARVIS
 ExecStart=/usr/bin/tmux -L jarvis-telegram new-session -d -s jarvis /opt/jarvis/bin/telegram.sh
 ExecStop=/usr/bin/tmux -L jarvis-telegram kill-server
-Restart=on-failure
+Restart=always
 RestartSec=30
 Nice=10
 MemoryHigh=2G
