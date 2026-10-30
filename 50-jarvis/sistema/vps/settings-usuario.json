@@ -63,17 +63,12 @@
       "Read(//opt/miner/**)",
       "Read(//var/lib/jarvis/**)",
       "Edit(~/.claude/**)",
-      "Write(~/.claude/**)",
       "Edit(~/.config/**)",
-      "Write(~/.config/**)",
       "Edit(~/.bashrc)",
-      "Write(~/.bashrc)",
       "Edit(~/.local/**)",
-      "Write(~/.local/**)",
       "Edit(~/.ssh/**)",
-      "Write(~/.ssh/**)",
-      "Edit(~/.gitconfig)",
-      "Write(~/.gitconfig)"
-    ]
+      "Edit(~/.gitconfig)"
+    ],
+    "defaultMode": "default"
   }
 }
