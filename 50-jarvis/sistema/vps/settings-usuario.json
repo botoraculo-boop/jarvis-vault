@@ -69,6 +69,6 @@
       "Edit(~/.ssh/**)",
       "Edit(~/.gitconfig)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   }
 }

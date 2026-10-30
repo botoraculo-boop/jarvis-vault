@@ -3,7 +3,7 @@
 # Se o claude sair (rede caiu, atualização), volta em 15 s.
 export PATH="$HOME/.local/bin:$HOME/.local/node/bin:$HOME/.bun/bin:/usr/local/bin:/usr/bin:/bin"
 [ -f "$HOME/.config/jarvis/env" ] && { set -a; . "$HOME/.config/jarvis/env"; set +a; }
-MODO="${JARVIS_MODO_PERMISSAO:-default}"
+MODO="${JARVIS_MODO_PERMISSAO:-auto}"
 cd "$HOME/JARVIS" || exit 1
 while true; do
   echo "$(date '+%F %T') iniciando remote-control (modo $MODO)"
