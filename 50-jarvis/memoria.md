@@ -18,6 +18,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 - Discordância e más notícias primeiro, com o motivo, a alternativa e o risco.
 - Separar o que foi conferido do que é dedução.
 - Uma pergunta por vez, e esperar a resposta.
+- Conferência só de leitura (receitas `status`, `logs`, `fotos`): rodar direto, sem pedir licença (pedido seu em 30/10).
 - Você costuma ditar por voz: "chip" = **tip**; "Sport Monkey" = Sportmonks; "The Sports"/"DAPI" = TheSports; "Culiso" pode vir separado.
 
 ## Projetos (detalhe em `10-projetos/`)
