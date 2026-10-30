@@ -222,7 +222,7 @@ Não feche a janela antiga até testar de novo numa nova. Se algo der errado, o 
 2. [VPS jarvis] `cd ~/JARVIS && claude`, e dentro: `/plugin install telegram@claude-plugins-official`, `/telegram:configure <token>`, `/exit`.
 3. [VPS root] `systemctl enable --now jarvis-telegram.service`.
 4. Mande qualquer mensagem ao bot: ele responde um código. [VPS root] `sudo -iu jarvis tmux -L jarvis-telegram attach`, digite `/telegram:access pair <código>` e `/telegram:access policy allowlist`. Saia com `Ctrl+B` e depois `D`.
-5. Para o briefing e a voz chegarem no Telegram, ponha o seu ID numérico (descubra com o @userinfobot) em `/home/jarvis/.config/jarvis/notificacao.env`: `TELEGRAM_CHAT_ID=123456789`.
+5. Para o briefing e a voz chegarem no Telegram, ponha o seu ID numérico (descubra com o @userinfobot) em `/home/jarvis/.config/jarvis/notificacao.env`: `TELEGRAM_CHAT_ID=123456789`. Com duas contas suas (dois números), pareie as duas (repita o item 4 com o código que o bot manda para a segunda) e ponha os dois IDs separados por vírgula: `TELEGRAM_CHAT_ID=123456789,987654321`.
 
 ## Passo 11 — voz: você manda áudio, ele responde em áudio [elevenlabs.io], [VPS root] e [VPS jarvis]
 **Como funciona:** você grava um áudio no Telegram → o Whisper transcreve **no próprio VPS** (o áudio não sai de lá) → o Jarvis responde em texto e deixa um resumo curto em `~/JARVIS/.fala/` → um script fora do Claude manda esse resumo para a ElevenLabs e devolve a mensagem de voz no seu Telegram. O texto da fala sai do VPS para a ElevenLabs; por isso ela nunca leva link, chave, telefone nem nome completo de hóspede.

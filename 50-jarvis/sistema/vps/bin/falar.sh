@@ -16,7 +16,7 @@ valor() { sed -n "s/^$1=\(.*\)$/\1/p" "$2" 2>/dev/null | head -1 | tr -d '"'"'"'
 KEY="$(valor ELEVENLABS_API_KEY "$HOME/.config/jarvis/voz.env")"
 VOZ="$(valor ELEVENLABS_VOICE_ID "$HOME/.config/jarvis/voz.env")"
 MODELO="$(valor ELEVENLABS_MODEL "$HOME/.config/jarvis/voz.env")"; MODELO="${MODELO:-eleven_multilingual_v2}"
-CHAT="$(valor TELEGRAM_CHAT_ID "$HOME/.config/jarvis/notificacao.env")"
+CHAT="$(valor TELEGRAM_CHAT_ID "$HOME/.config/jarvis/notificacao.env")"   # um ou mais, separados por vírgula
 TOKEN="$(valor TELEGRAM_BOT_TOKEN "$HOME/.claude/channels/telegram/.env")"
 [[ "$VOZ" =~ ^[A-Za-z0-9]{10,40}$ ]] || VOZ=""
 [[ "$MODELO" =~ ^[a-z0-9_]{3,60}$ ]] || MODELO=eleven_multilingual_v2
@@ -52,9 +52,12 @@ for f in "$FILA"/*; do
   else
     arq="$tmp/fala.mp3"; metodo=sendAudio; campo=audio
   fi
-  r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$TOKEN" "$metodo" | \
-       curl -sS -m 60 -K - -o /dev/null -w '%{http_code}' -F "chat_id=$CHAT" -F "$campo=@$arq")"
-  [ "$r" = "200" ] || echo "$(date '+%F %T') Telegram respondeu $r ao mandar a voz" >> "$ERRO/log.txt"
+  for id in ${CHAT//,/ }; do
+    [[ "$id" =~ ^-?[0-9]+$ ]] || continue
+    r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$TOKEN" "$metodo" | \
+         curl -sS -m 60 -K - -o /dev/null -w '%{http_code}' -F "chat_id=$id" -F "$campo=@$arq")"
+    [ "$r" = "200" ] || echo "$(date '+%F %T') Telegram respondeu $r ao mandar a voz para um dos chats" >> "$ERRO/log.txt"
+  done
   rm -rf "$tmp"
 done
 exit 0
