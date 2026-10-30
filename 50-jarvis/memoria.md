@@ -10,6 +10,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 ## Você
 - João Gabriel de Melo, Brazlândia (DF). Analista de sistemas formado na UDF; não programa: comandos vêm passo a passo, explicados.
 - Computadores: Windows (PowerShell; pasta de trabalho `C:\Users\Naldim\Claude`, fora do OneDrive) e Ubuntu com placa NVIDIA. Três celulares.
+- Telegram: as duas contas liberadas no bot são suas (IDs 7557488338 e 1947185990; confirmado em 30/10). Trate as duas como você.
 - A "nossa empresa" no contexto do Jarvis = o seu ecossistema de robôs e agentes, não uma empresa com várias pessoas.
 
 ## Como falar com você
