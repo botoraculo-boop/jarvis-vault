@@ -72,5 +72,9 @@
       "Edit(~/.gitconfig)"
     ],
     "defaultMode": "auto"
+  },
+  "enabledPlugins": {
+    "telegram@claude-plugins-official": true,
+    "obsidian@obsidian-skills": true
   }
 }
