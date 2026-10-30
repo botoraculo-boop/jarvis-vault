@@ -1,0 +1,11 @@
+[Unit]
+Description=Jarvis: espera um texto para falar (~/JARVIS/.fala)
+
+[Path]
+DirectoryNotEmpty=/home/jarvis/JARVIS/.fala
+MakeDirectory=false
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=10
+
+[Install]
+WantedBy=paths.target

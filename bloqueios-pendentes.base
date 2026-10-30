@@ -1,0 +1,14 @@
+# Painel do Obsidian Bases: reservas com bloqueio ainda por fazer nos outros canais.
+# Cada nota de reserva tem no frontmatter: tipo: reserva e bloqueios_pendentes: true/false.
+filters:
+  and:
+    - tipo == "reserva"
+    - bloqueios_pendentes == true
+views:
+  - type: table
+    name: Bloqueios pendentes
+    order:
+      - file.name
+      - checkin
+      - checkout
+      - canal

@@ -1,0 +1,295 @@
+#!/bin/bash
+# RECEITAS DO JARVIS — o porteiro entre o Jarvis e a produção (Oráculo, The Miner).
+#
+# Instalado em /opt/jarvis/bin/receita (dono root, 755). O usuário jarvis só pode rodar como root
+# ESTE arquivo (/etc/sudoers.d/jarvis), e o Claude Code pede "Permitir" para tudo que não é
+# status/logs/fotos. Toda receita que muda algo tira uma FOTO antes em /var/lib/jarvis/fotos/.
+#
+# Uso: sudo -n /opt/jarvis/bin/receita <receita> [argumentos]      (receita ajuda = a lista)
+set -euo pipefail
+shopt -s inherit_errexit
+umask 077
+cd /   # nunca rodar a partir da pasta de quem chamou (o Python carregaria módulos de lá)
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export LC_ALL=C.UTF-8
+
+LIB=/var/lib/jarvis
+FOTOS=$LIB/fotos
+LOG=/var/log/jarvis-receitas.log
+QUEM="${SUDO_USER:-$(id -un)}"
+ORACULO=/opt/oraculo
+ORACULO_LIB=/var/lib/oraculo
+MINER=/opt/miner
+MINER_BACKUPS=/opt/miner-backups
+JARVIS_UNIDADES="jarvis-remoto jarvis-telegram"
+
+registrar() { mkdir -p "$(dirname "$LOG")"; echo "$(date '+%F %T') [$QUEM] $*" >> "$LOG"; logger -t jarvis-receita -- "[$QUEM] $*" || true; }
+erro() { echo "ERRO: $*" >&2; registrar "ERRO: $*"; exit 1; }
+ok() { echo "OK: $*"; }
+
+# ------------------------------------------------------------------ fotos (antes de mudar)
+# foto <receita> <alvo> <motivo>  -> imprime a pasta criada
+foto() {
+  local receita="$1" alvo="$2" motivo="$3" id dir
+  install -d -m 700 -o root -g root "$LIB" "$FOTOS"
+  id="$(date +%Y%m%d-%H%M%S)-$receita"
+  dir="$FOTOS/$id"
+  install -d -m 700 "$dir"
+  local v_or v_mi
+  v_or="$(versao_oraculo)"; v_mi="$(versao_miner)"
+  python3 -I - "$dir/meta.json" "$receita" "$alvo" "$motivo" "$v_or" "$v_mi" "$QUEM" <<'PY'
+import json, sys, time
+arq, receita, alvo, motivo, v_or, v_mi, quem = sys.argv[1:]
+json.dump({"id": arq.split("/")[-2], "receita": receita, "alvo": alvo, "motivo": motivo, "quando": time.strftime("%Y-%m-%d %H:%M:%S"),
+           "versao_oraculo": v_or, "versao_miner": v_mi, "por": quem}, open(arq, "w"), ensure_ascii=False, indent=1)
+PY
+  systemctl --no-pager status oraculo miner > "$dir/servicos.txt" 2>&1 || true
+  # cópia do banco do alvo (só para volta manual; a receita desfazer NÃO restaura banco)
+  case "$alvo" in
+    oraculo) copiar_banco "$ORACULO/oraculo.db" "$dir/oraculo.db" >&2 ;;
+    miner)   copiar_banco "$MINER/dados/miner.db" "$dir/miner.db" >&2
+             [ -f "$MINER/dados/configuracoes.json" ] && cp -p "$MINER/dados/configuracoes.json" "$dir/" ;;
+  esac
+  # guarda as 15 fotos mais novas; bancos só nas 3 mais novas (disco)
+  ls -1dt "$FOTOS"/*/ 2>/dev/null | tail -n +16 | xargs -r rm -rf
+  ls -1dt "$FOTOS"/*/ 2>/dev/null | tail -n +4 | while read -r d; do rm -f "$d"/*.db; done
+  [ -f "$dir/meta.json" ] || { echo "ERRO: a foto não foi gravada; nada foi mudado" >&2; exit 1; }
+  registrar "foto $id ($receita $alvo): $motivo"
+  echo "$dir"
+}
+
+copiar_banco() {  # cópia consistente de um SQLite em uso (API de backup), com teto de disco
+  local de="$1" para="$2"
+  [ -f "$de" ] || return 0
+  local tam livre
+  tam=$(stat -c %s "$de"); livre=$(df --output=avail -B1 "$LIB" | tail -1)
+  if [ $((tam * 2 + 1073741824)) -gt "$livre" ]; then echo "  (sem espaço para copiar $(basename "$de"); foto sem banco)" >&2; return 0; fi
+  nice -n 15 ionice -c3 python3 -I -c 'import sqlite3,sys; a=sqlite3.connect("file:"+sys.argv[1]+"?mode=ro",uri=True); b=sqlite3.connect(sys.argv[2]); a.backup(b); b.close(); a.close()' "$de" "$para"
+}
+
+versao_oraculo() {
+  python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1])).get("versao",""))' "$ORACULO/atualizacao/rodando.json" 2>/dev/null || echo "?"
+}
+versao_miner() {
+  sed -n 's/^VERSAO = "\(.*\)"/\1/p' "$MINER/miner/__init__.py" 2>/dev/null || echo "?"
+}
+
+servico_de() {  # nome curto -> unidade systemd (lista fechada)
+  case "${1:-}" in
+    oraculo) echo oraculo ;;
+    oraculo-atualizar) echo oraculo-atualizar ;;
+    miner) echo miner ;;
+    caddy) echo caddy ;;
+    jarvis-remoto|jarvis-telegram|jarvis-briefing|jarvis-revisao|jarvis-git|jarvis-espelho|jarvis-reinicio|jarvis-fala) echo "$1" ;;
+    *) return 1 ;;
+  esac
+}
+
+# ------------------------------------------------------------------ receitas
+r_ajuda() {
+  cat <<'TXT'
+Receitas (sudo -n /opt/jarvis/bin/receita <receita> ...):
+  LIVRES (sem "Permitir")
+    status                         serviços, versões, memória, disco, idade do espelho, últimas fotos
+    logs <alvo> [linhas]           últimas linhas do log (alvo: oraculo, oraculo-atualizar, miner, caddy, jarvis-*; até 300)
+    fotos                          lista as fotos guardadas (o que pode ser desfeito)
+  PEDEM "Permitir"
+    espelho                        atualiza agora o espelho só de leitura em ~/dados
+    backup <oraculo|miner>         cópia do banco em /var/lib/jarvis/backups (fica 7 dias)
+    reiniciar <oraculo|miner>      foto + systemctl restart
+    atualizar-oraculo <versao> <commit>
+                                   foto + pedido ao atualizador do Oráculo (o mesmo do botão ATUALIZAR;
+                                   ele confere se o commit está na main e volta sozinho se a versão não subir)
+    atualizar-miner                foto + pedido ao atualizador do Miner (o mesmo do botão Atualizar do painel)
+    desfazer [id-da-foto]          volta a mudança da última foto (ou da escolhida)
+    parar-jarvis                   KILL SWITCH: para todas as sessões do Jarvis (Remote Control e Telegram)
+    ligar-jarvis                   liga de novo as sessões
+TXT
+}
+
+r_status() {
+  echo "== Serviços"
+  for u in oraculo oraculo-atualizar.path miner caddy jarvis-remoto jarvis-telegram jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer; do
+    printf '  %-24s %s\n' "$u" "$(systemctl is-active "$u" 2>/dev/null || true)"
+  done
+  echo "== Versões"
+  echo "  Oráculo: $(versao_oraculo)   The Miner: $(versao_miner)"
+  if [ -f "$ORACULO/atualizacao/estado.json" ]; then
+    echo "  Última atualização do Oráculo: $(python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d.get("etapa","?"), "-", str(d.get("texto",""))[:120])' "$ORACULO/atualizacao/estado.json" 2>/dev/null || echo '?')"
+  fi
+  if [ -f "$MINER/dados/atualizacao.json" ]; then
+    echo "  Última atualização do Miner: $(python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d.get("estado","?"), "-", str(d.get("mensagem",""))[:120])' "$MINER/dados/atualizacao.json" 2>/dev/null || echo '?')"
+  fi
+  echo "== Máquina"
+  echo "  $(uptime -p 2>/dev/null || true)"
+  free -h | sed 's/^/  /'
+  df -h / | sed 's/^/  /'
+  echo "== Espelho (~jarvis/dados)"
+  ls -l --time-style=+'%d/%m %H:%M' /var/lib/jarvis-dados/*.db 2>/dev/null | awk '{print "  "$6" "$7"  "$5" bytes  "$NF}' || echo "  (vazio)"
+  echo "== Últimas fotos"
+  ls -1t "$FOTOS" 2>/dev/null | head -3 | sed 's/^/  /' || true
+}
+
+r_logs() {
+  local u n
+  u="$(servico_de "${1:-}")" || erro "alvo inválido: ${1:-} (use oraculo, oraculo-atualizar, miner, caddy ou jarvis-*)"
+  n="${2:-50}"; [[ "$n" =~ ^[0-9]{1,3}$ ]] || erro "linhas inválidas"; [ "$n" -le 300 ] || n=300
+  journalctl -u "$u" -n "$n" --no-pager -o short-iso
+}
+
+r_fotos() {
+  [ -d "$FOTOS" ] || { echo "nenhuma foto"; return 0; }
+  for d in $(ls -1t "$FOTOS"); do
+    python3 -I -c 'import json,sys; m=json.load(open(sys.argv[1])); print("%(id)s  %(receita)s %(alvo)s  Oráculo %(versao_oraculo)s · Miner %(versao_miner)s  — %(motivo)s" % m)' "$FOTOS/$d/meta.json" 2>/dev/null || echo "$d"
+  done
+}
+
+r_espelho() {
+  registrar "espelho manual"
+  systemctl start jarvis-espelho.service
+  ok "espelho atualizado: $(tail -n 1 /var/lib/jarvis-dados/espelho.log 2>/dev/null)"
+}
+
+r_backup() {
+  local alvo="${1:-}" de
+  case "$alvo" in oraculo) de="$ORACULO/oraculo.db" ;; miner) de="$MINER/dados/miner.db" ;; *) erro "use: backup oraculo|miner" ;; esac
+  install -d -m 700 "$LIB/backups"
+  local para="$LIB/backups/$alvo-$(date +%Y%m%d-%H%M%S).db"
+  copiar_banco "$de" "$para"
+  [ -f "$para" ] || erro "não consegui copiar (sem espaço?)"
+  find "$LIB/backups" -name '*.db' -mtime +7 -delete
+  registrar "backup $alvo -> $para"
+  ok "backup de $alvo em $para ($(du -h "$para" | cut -f1))"
+}
+
+r_reiniciar() {
+  local alvo="${1:-}" u
+  case "$alvo" in oraculo|miner) u="$alvo" ;; *) erro "use: reiniciar oraculo|miner" ;; esac
+  local d; d="$(foto reiniciar "$alvo" "reiniciar $alvo a pedido")"
+  systemctl restart "$u"
+  sleep 8
+  systemctl is-active --quiet "$u" && ok "$u reiniciado e ativo (foto $(basename "$d"))" || erro "$u não ficou ativo; veja: receita logs $alvo"
+  registrar "reiniciar $alvo"
+}
+
+r_atualizar_oraculo() {
+  local v="${1:-}" c="${2:-}"
+  [[ "$v" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]] || erro "versão inválida (ex.: 9.77)"
+  [[ "$c" =~ ^[0-9a-f]{40}$ ]] || erro "commit inválido (os 40 caracteres do commit na main)"
+  local dir="$ORACULO/atualizacao"
+  [ -d "$dir" ] && [ ! -L "$dir" ] || erro "o atualizador do Oráculo não está instalado ($dir)"
+  [ -e "$dir/pedido.json" ] && erro "já existe um pedido de atualização esperando"
+  systemctl is-active --quiet oraculo-atualizar.path || erro "o atualizador do Oráculo está desligado (oraculo-atualizar.path)"
+  local atual; atual="$(versao_oraculo)"
+  [ -f "$ORACULO_LIB/versoes/$atual/atualizar.sh" ] || erro "a versão no ar ($atual) não está guardada em $ORACULO_LIB/versoes: sem ela não há volta. Atualize pelo botão do Oráculo."
+  local d; d="$(foto atualizar-oraculo oraculo "atualizar o Oráculo de $atual para $v ($c)")"
+  runuser -u oraculo -- python3 -I - "$dir" "$v" "$c" <<'PY'
+import json, os, sys, time
+d, v, c = sys.argv[1:]
+tmp = os.path.join(d, "pedido.json.tmp")
+json.dump({"versao": v, "commit": c, "por": "Jarvis (pedido do dono)", "auto": False, "ts": time.time()}, open(tmp, "w"))
+os.replace(tmp, os.path.join(d, "pedido.json"))
+PY
+  registrar "atualizar-oraculo $atual -> $v ($c)"
+  ok "pedido entregue ao atualizador do Oráculo ($atual -> $v). Acompanhe com: receita logs oraculo-atualizar. Foto: $(basename "$d")"
+}
+
+r_atualizar_miner() {
+  [ -d "$MINER/dados" ] || erro "não achei $MINER/dados"
+  systemctl is-active --quiet miner-atualizar.path || erro "o atualizador do Miner não está ligado: rode uma vez, como root, bash $MINER/ferramentas/atualizar.sh"
+  [ -e "$MINER/dados/atualizar.pedido" ] && erro "já existe um pedido de atualização esperando"
+  local atual d; atual="$(versao_miner)"
+  d="$(foto atualizar-miner miner "atualizar o Miner a partir da $atual")"
+  runuser -u miner -- touch "$MINER/dados/atualizar.pedido"
+  registrar "atualizar-miner a partir da $atual"
+  ok "pedido entregue ao atualizador do Miner (versão em uso: $atual). Ele testa, guarda cópia em $MINER_BACKUPS e volta sozinho se falhar. Foto: $(basename "$d")"
+}
+
+r_parar_jarvis() {
+  registrar "KILL SWITCH: parar-jarvis"
+  systemctl stop $JARVIS_UNIDADES jarvis-briefing.timer jarvis-revisao.timer jarvis-git.timer jarvis-fala.path \
+    jarvis-briefing.service jarvis-revisao.service jarvis-git.service 2>/dev/null || true
+  pkill -KILL -u jarvis 2>/dev/null || true   # tudo do jarvis, inclusive o que ele deixou rodando
+  ok "Jarvis parado. Para ligar: receita ligar-jarvis (pelo SSH) ou sudo systemctl start jarvis-remoto"
+}
+
+r_ligar_jarvis() {
+  registrar "ligar-jarvis"
+  systemctl start jarvis-remoto jarvis-briefing.timer jarvis-revisao.timer jarvis-git.timer
+  systemctl is-enabled --quiet jarvis-fala.path 2>/dev/null && systemctl start jarvis-fala.path || true
+  systemctl is-enabled --quiet jarvis-telegram 2>/dev/null && systemctl start jarvis-telegram || true
+  ok "Jarvis ligado"
+}
+
+r_desfazer() {
+  local id="${1:-}" dir meta
+  if [ -z "$id" ]; then
+    id="$(ls -1t "$FOTOS" 2>/dev/null | grep -E -- '-(atualizar-oraculo|atualizar-miner|parar-jarvis)$' | head -1 || true)"
+    [ -n "$id" ] || erro "não há foto de mudança que dê para desfazer (veja: receita fotos)"
+  fi
+  [[ "$id" =~ ^[0-9]{8}-[0-9]{6}-[a-z-]+$ ]] || erro "id de foto inválido"
+  dir="$FOTOS/$id"; meta="$dir/meta.json"
+  [ -f "$meta" ] || erro "foto $id não existe"
+  local receita v_or v_mi
+  receita=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["receita"])' "$meta")
+  v_or=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["versao_oraculo"])' "$meta")
+  v_mi=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["versao_miner"])' "$meta")
+  case "$receita" in
+    atualizar-oraculo)
+      [[ "$v_or" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]] || erro "a foto não tem a versão do Oráculo"
+      local pasta="$ORACULO_LIB/versoes/$v_or"
+      [ -f "$pasta/atualizar.sh" ] && [ ! -L "$pasta" ] || erro "a versão $v_or não está guardada em $ORACULO_LIB/versoes"
+      [ "$(versao_oraculo)" = "$v_or" ] && { ok "o Oráculo já está na $v_or: nada a desfazer"; return 0; }
+      foto desfazer oraculo "desfazer $id: voltar o Oráculo para a $v_or" >/dev/null
+      registrar "desfazer $id: Oráculo -> $v_or"
+      ( cd "$pasta" && ORACULO_DESTINO="$ORACULO" ORACULO_LIB="$ORACULO_LIB" bash ./atualizar.sh ) || erro "o atualizar.sh da $v_or falhou; veja: receita logs oraculo"
+      sleep 10
+      ok "Oráculo voltou para a $v_or (agora: $(versao_oraculo)). O banco NÃO foi trocado; a cópia de antes está em $dir/oraculo.db se precisar."
+      ;;
+    atualizar-miner)
+      [[ "$v_mi" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]] || erro "a foto não tem a versão do Miner"
+      local tgz
+      tgz="$(ls -1t "$MINER_BACKUPS"/miner-"$v_mi"-*.tgz 2>/dev/null | head -1 || true)"
+      [ -n "$tgz" ] || erro "não achei a cópia da $v_mi em $MINER_BACKUPS"
+      tar -tzf "$tgz" >/dev/null || erro "a cópia $tgz está estragada; nada foi mudado"
+      [ "$(versao_miner)" = "$v_mi" ] && { ok "o Miner já está na $v_mi: nada a desfazer"; return 0; }
+      foto desfazer miner "desfazer $id: voltar o Miner para a $v_mi" >/dev/null
+      registrar "desfazer $id: Miner -> $v_mi ($tgz)"
+      # o mesmo caminho da volta automática do atualizar.sh do Miner: troca o código, mantém .env, dados/ e .venv
+      systemctl stop miner
+      shopt -s dotglob nullglob
+      for item in "$MINER"/*; do
+        case "$(basename "$item")" in .env|dados|dados.*|.venv) ;; *) rm -rf "$item" ;; esac
+      done
+      shopt -u dotglob nullglob
+      if ! tar -C "$(dirname "$MINER")" -xzf "$tgz" --exclude="$(basename "$MINER")/dados" --exclude="$(basename "$MINER")/.env"; then
+        systemctl start miner || true
+        erro "a extração de $tgz falhou no meio; confira $MINER e journalctl -u miner (a cópia continua em $MINER_BACKUPS)"
+      fi
+      chown -R miner:miner "$MINER"
+      systemctl start miner; sleep 8
+      systemctl is-active --quiet miner && ok "Miner voltou para a $(versao_miner) e está ativo" || erro "o Miner não ficou ativo; veja: receita logs miner"
+      ;;
+    parar-jarvis) r_ligar_jarvis ;;
+    *) erro "a receita '$receita' não muda nada que precise ser desfeito" ;;
+  esac
+}
+
+# ------------------------------------------------------------------ despacho
+[ "$(id -u)" -eq 0 ] || erro "rode com sudo -n /opt/jarvis/bin/receita ..."
+cmd="${1:-ajuda}"; shift || true
+case "$cmd" in
+  ajuda|-h|--help) r_ajuda ;;
+  status) r_status ;;
+  logs) r_logs "$@" ;;
+  fotos) r_fotos ;;
+  espelho) r_espelho ;;
+  backup) r_backup "$@" ;;
+  reiniciar) r_reiniciar "$@" ;;
+  atualizar-oraculo) r_atualizar_oraculo "$@" ;;
+  atualizar-miner) r_atualizar_miner ;;
+  desfazer) r_desfazer "$@" ;;
+  parar-jarvis) foto parar-jarvis jarvis "kill switch" >/dev/null; r_parar_jarvis ;;
+  ligar-jarvis) r_ligar_jarvis ;;
+  *) erro "receita desconhecida: $cmd (veja: receita ajuda)" ;;
+esac

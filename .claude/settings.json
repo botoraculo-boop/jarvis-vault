@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "autoMemoryEnabled": false,
+  "permissions": {
+    "allow": [
+      "Bash(sudo -n /opt/jarvis/bin/receita status)",
+      "Bash(sudo -n /opt/jarvis/bin/receita ajuda)",
+      "Bash(sudo -n /opt/jarvis/bin/receita fotos)",
+      "Bash(sudo -n /opt/jarvis/bin/receita logs *)"
+    ],
+    "ask": [
+      "Bash(sudo -n /opt/jarvis/bin/receita espelho*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita backup*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita reiniciar*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita atualizar-oraculo*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita atualizar-miner*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita desfazer*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita parar-jarvis*)",
+      "Bash(sudo -n /opt/jarvis/bin/receita ligar-jarvis*)",
+      "Edit(/CLAUDE.md)",
+      "Write(/CLAUDE.md)",
+      "mcp__hostinger-api"
+    ],
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.config/jarvis/**)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.claude/channels/telegram/.env)",
+      "Read(//opt/oraculo/**)",
+      "Read(//opt/miner/**)",
+      "Read(//opt/miner-backups/**)",
+      "Read(//var/lib/oraculo/**)",
+      "Read(//var/lib/jarvis/**)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/configuracoes.json)",
+      "Read(**/config.json)",
+      "Edit(/30-conhecimento/raw/**)",
+      "Write(/30-conhecimento/raw/**)",
+      "Edit(/50-jarvis/sistema/vps/**)",
+      "Write(/50-jarvis/sistema/vps/**)",
+      "Edit(/.claude/settings.json)",
+      "Write(/.claude/settings.json)",
+      "Edit(/.claude/settings.local.json)",
+      "Write(/.claude/settings.local.json)",
+      "Edit(/.claude/hooks/**)",
+      "Write(/.claude/hooks/**)",
+      "Edit(/.gitignore)",
+      "Write(/.gitignore)",
+      "Bash(printenv*)",
+      "Bash(env)",
+      "Bash(sudo -i*)",
+      "Bash(sudo su*)",
+      "Bash(sudo bash*)",
+      "Bash(sudo -s*)",
+      "mcp__hostinger-api__billing_*",
+      "Edit(/.git/**)",
+      "Write(/.git/**)",
+      "Edit(~/.claude/**)",
+      "Write(~/.claude/**)",
+      "Edit(~/.config/**)",
+      "Write(~/.config/**)",
+      "Edit(~/.bashrc)",
+      "Write(~/.bashrc)",
+      "Edit(~/.profile)",
+      "Write(~/.profile)",
+      "Edit(~/.bash_profile)",
+      "Write(~/.bash_profile)",
+      "Edit(~/.local/**)",
+      "Write(~/.local/**)",
+      "Edit(~/.bun/**)",
+      "Write(~/.bun/**)",
+      "Edit(~/.ssh/**)",
+      "Write(~/.ssh/**)",
+      "Edit(~/.gitconfig)",
+      "Write(~/.gitconfig)",
+      "Bash(git push*)",
+      "Bash(git -C * push*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/inicio-sessao.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-edicao.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autocommit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

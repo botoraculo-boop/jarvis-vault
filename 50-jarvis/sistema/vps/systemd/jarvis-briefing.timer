@@ -1,0 +1,9 @@
+[Unit]
+Description=Jarvis: briefing da manhã (horário)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 07:00:00 America/Sao_Paulo
+Persistent=true
+
+[Install]
+WantedBy=timers.target

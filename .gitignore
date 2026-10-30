@@ -1,0 +1,25 @@
+# segredos nunca entram no vault
+.env
+*.env
+.env.*
+*.key
+*.pem
+id_*
+credentials*.json
+# coisas locais
+.obsidian/workspace*.json
+.obsidian/cache
+.trash/
+.DS_Store
+Thumbs.db
+# dados do espelho e arquivos grandes ficam fora do vault (~/dados)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+# log bruto dos hooks (o resumo vai na nota do dia)
+50-jarvis/log/*.jsonl
+.claude/settings.local.json
+
+# fila de falas do Jarvis (texto que vira voz; some depois de enviado)
+.fala/

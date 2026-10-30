@@ -1,0 +1,13 @@
+[Unit]
+Description=Jarvis: sincroniza o vault com o GitHub
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jarvis
+Group=jarvis
+Environment=HOME=/home/jarvis
+ExecStart=/opt/jarvis/bin/git-sync.sh
+TimeoutStartSec=5min
+Nice=10

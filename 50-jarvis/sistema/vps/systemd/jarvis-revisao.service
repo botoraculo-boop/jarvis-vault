@@ -1,0 +1,15 @@
+[Unit]
+Description=Jarvis: revisão semanal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jarvis
+Group=jarvis
+Environment=HOME=/home/jarvis
+ExecStart=/opt/jarvis/bin/rotina.sh revisao-semanal
+TimeoutStartSec=25min
+Nice=10
+MemoryHigh=1G
+MemoryMax=1536M

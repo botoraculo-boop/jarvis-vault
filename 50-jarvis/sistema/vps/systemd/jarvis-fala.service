@@ -1,0 +1,14 @@
+[Unit]
+Description=Jarvis: transforma o texto em voz (ElevenLabs) e manda no Telegram
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jarvis
+Group=jarvis
+Environment=HOME=/home/jarvis
+ExecStart=/opt/jarvis/bin/falar.sh
+TimeoutStartSec=5min
+Nice=10
+MemoryMax=512M

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "autoMemoryEnabled": false,
+  "remoteControlAtStartup": true,
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": [
+      "sudo -n /opt/jarvis/bin/receita *"
+    ],
+    "network": {
+      "allowedDomains": [
+        "airbnb.com",
+        "*.airbnb.com",
+        "airbnb.com.br",
+        "*.airbnb.com.br",
+        "booking.com",
+        "*.booking.com"
+      ]
+    },
+    "filesystem": {
+      "allowWrite": [
+        "~/repos",
+        "/tmp"
+      ],
+      "denyWrite": [
+        "~/JARVIS/50-jarvis/sistema/vps",
+        "~/JARVIS/.claude/settings.json",
+        "~/JARVIS/.claude/settings.local.json",
+        "~/JARVIS/.claude/hooks",
+        "~/JARVIS/30-conhecimento/raw",
+        "/var/lib/jarvis-dados",
+        "~/JARVIS/.git/hooks",
+        "~/JARVIS/.git/config",
+        "~/repos/oraculo/.git/hooks",
+        "~/repos/oraculo/.git/config",
+        "~/repos/theminer/.git/hooks",
+        "~/repos/theminer/.git/config",
+        "~/.gitconfig"
+      ],
+      "denyRead": [
+        "~/.ssh",
+        "~/.config/jarvis",
+        "~/.claude/.credentials.json",
+        "~/.claude/channels/telegram/.env",
+        "/opt/oraculo",
+        "/opt/miner",
+        "/opt/miner-backups",
+        "/var/lib/oraculo",
+        "/var/lib/jarvis"
+      ]
+    }
+  },
+  "permissions": {
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.config/jarvis/**)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.claude/channels/telegram/.env)",
+      "Read(//opt/oraculo/**)",
+      "Read(//opt/miner/**)",
+      "Read(//var/lib/jarvis/**)",
+      "Edit(~/.claude/**)",
+      "Write(~/.claude/**)",
+      "Edit(~/.config/**)",
+      "Write(~/.config/**)",
+      "Edit(~/.bashrc)",
+      "Write(~/.bashrc)",
+      "Edit(~/.local/**)",
+      "Write(~/.local/**)",
+      "Edit(~/.ssh/**)",
+      "Write(~/.ssh/**)",
+      "Edit(~/.gitconfig)",
+      "Write(~/.gitconfig)"
+    ]
+  }
+}

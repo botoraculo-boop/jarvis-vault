@@ -1,0 +1,21 @@
+[Unit]
+Description=Jarvis: Remote Control (sessões do app Claude)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=jarvis
+Group=jarvis
+Environment=HOME=/home/jarvis
+WorkingDirectory=/home/jarvis/JARVIS
+ExecStart=/usr/bin/tmux -L jarvis-remoto new-session -d -s jarvis /opt/jarvis/bin/remoto.sh
+ExecStop=/usr/bin/tmux -L jarvis-remoto kill-server
+Restart=on-failure
+RestartSec=30
+Nice=10
+MemoryHigh=2G
+MemoryMax=2560M
+
+[Install]
+WantedBy=multi-user.target

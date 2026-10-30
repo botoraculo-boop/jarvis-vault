@@ -1,0 +1,5 @@
+# /etc/sudoers.d/jarvis — o usuário jarvis só pode rodar como root as RECEITAS (um arquivo de dono root).
+# Nada de shell, nada de outro comando. Instalado pelo instalar-servicos.sh (confere com visudo antes).
+Defaults:jarvis env_reset
+Defaults:jarvis secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+jarvis ALL=(root) NOPASSWD: /opt/jarvis/bin/receita

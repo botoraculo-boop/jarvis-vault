@@ -1,0 +1,11 @@
+[Unit]
+Description=Jarvis: espelho só de leitura dos bancos do Oráculo e do Miner (sem contas)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -I /opt/jarvis/bin/espelho.py
+TimeoutStartSec=30min
+Nice=15
+IOSchedulingClass=idle
+ProtectHome=read-only
+PrivateTmp=true

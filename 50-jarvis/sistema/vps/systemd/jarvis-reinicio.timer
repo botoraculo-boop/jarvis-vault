@@ -1,0 +1,9 @@
+[Unit]
+Description=Jarvis: reinício diário das sessões (horário)
+
+[Timer]
+OnCalendar=*-*-* 04:30:00 America/Sao_Paulo
+Persistent=false
+
+[Install]
+WantedBy=timers.target
