@@ -24,6 +24,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 - [[mar-e-lago]], [[educabet]], [[poker-das-lendas]].
 
 ## Infra
+- O assistente se chama **Capi** (decidido em 30/10); "Jarvis" é o nome do sistema (usuário, pastas, serviços).
 - VPS Hostinger 2.25.247.175, Ubuntu 24.04, 7,8 GB de RAM. Roda Oráculo, The Miner e o Jarvis (usuário `jarvis`).
 - Vault sincronizado pelo Git (GitHub privado); no celular, Obsidian para leitura.
 
