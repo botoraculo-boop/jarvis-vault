@@ -1,8 +1,10 @@
 #!/bin/bash
 # VOZ DO JARVIS: transforma em áudio (ElevenLabs) os textos que o Jarvis deixa em ~/JARVIS/.fala/ e manda
-# como mensagem de voz no SEU chat do Telegram. Roda como jarvis, fora do Claude (jarvis-fala.path).
+# como mensagem de voz no Telegram. Roda como jarvis, fora do Claude (jarvis-fala.path).
 # A chave da ElevenLabs e o token do Telegram nunca passam pelo Claude nem pela linha de comando.
 #   ~/.config/jarvis/voz.env:  ELEVENLABS_API_KEY=...  ELEVENLABS_VOICE_ID=...  [ELEVENLABS_MODEL=eleven_multilingual_v2]
+# DESTINO: nome do arquivo "<chat_id>--<qualquer coisa>.txt" manda só para esse chat, se ele estiver em PERMITIDOS.
+# Sem ID, ID fora da lista ou nome estranho: vai só para o chat principal (primeiro ID de TELEGRAM_CHAT_ID).
 set -u
 export PATH=/usr/bin:/bin
 FILA="$HOME/JARVIS/.fala"
@@ -10,16 +12,19 @@ ERRO="$HOME/.cache/jarvis/fala-erro"
 CONTA="$HOME/.cache/jarvis/fala-contagem"
 MAX_CARACTERES=700          # cada fala; o resto fica só no texto (o plano grátis conta caracteres)
 MAX_POR_HORA=20             # trava contra repetição
+PERMITIDOS="1947185990 6323660735 7557488338"   # lista branca das contas dele. Mudar = editar no vault e reinstalar
 mkdir -p "$ERRO"
 
 valor() { sed -n "s/^$1=\(.*\)$/\1/p" "$2" 2>/dev/null | head -1 | tr -d '"'"'"' \r'; }
 KEY="$(valor ELEVENLABS_API_KEY "$HOME/.config/jarvis/voz.env")"
 VOZ="$(valor ELEVENLABS_VOICE_ID "$HOME/.config/jarvis/voz.env")"
 MODELO="$(valor ELEVENLABS_MODEL "$HOME/.config/jarvis/voz.env")"; MODELO="${MODELO:-eleven_multilingual_v2}"
-CHAT="$(valor TELEGRAM_CHAT_ID "$HOME/.config/jarvis/notificacao.env")"   # um ou mais, separados por vírgula
+CHAT="$(valor TELEGRAM_CHAT_ID "$HOME/.config/jarvis/notificacao.env")"   # o primeiro é o principal
 TOKEN="$(valor TELEGRAM_BOT_TOKEN "$HOME/.claude/channels/telegram/.env")"
 [[ "$VOZ" =~ ^[A-Za-z0-9]{10,40}$ ]] || VOZ=""
 [[ "$MODELO" =~ ^[a-z0-9_]{3,60}$ ]] || MODELO=eleven_multilingual_v2
+PRINCIPAL="${CHAT%%,*}"
+[[ "$PRINCIPAL" =~ ^-?[0-9]+$ ]] || PRINCIPAL=""
 
 for f in "$FILA"/*; do
   [ -e "$f" ] || continue
@@ -28,8 +33,15 @@ for f in "$FILA"/*; do
   texto="$(head -c 4000 "$f" | tr -d '\000' | head -c "$MAX_CARACTERES")"
   rm -f "$f"
   [ -n "${texto//[[:space:]]/}" ] || continue
-  if [ -z "$KEY" ] || [ -z "$VOZ" ] || [ -z "$CHAT" ] || [ -z "$TOKEN" ]; then
+  if [ -z "$KEY" ] || [ -z "$VOZ" ] || [ -z "$PRINCIPAL" ] || [ -z "$TOKEN" ]; then
     echo "$(date '+%F %T') voz não configurada (voz.env / notificacao.env / Telegram): $nome" >> "$ERRO/log.txt"; continue
+  fi
+  # para quem vai: o ID do nome do arquivo, se estiver na lista branca; senão, o principal
+  destino="$PRINCIPAL"
+  if [[ "$nome" =~ ^(-?[0-9]+)-- ]]; then
+    pedido="${BASH_REMATCH[1]}"
+    for p in $PERMITIDOS; do [ "$pedido" = "$p" ] && destino="$p"; done
+    [ "$destino" = "$pedido" ] || echo "$(date '+%F %T') ID $pedido fora da lista; fala mandada ao principal" >> "$ERRO/log.txt"
   fi
   # limite por hora
   hora="$(date +%Y%m%d%H)"; n=0
@@ -52,12 +64,9 @@ for f in "$FILA"/*; do
   else
     arq="$tmp/fala.mp3"; metodo=sendAudio; campo=audio
   fi
-  for id in ${CHAT//,/ }; do
-    [[ "$id" =~ ^-?[0-9]+$ ]] || continue
-    r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$TOKEN" "$metodo" | \
-         curl -sS -m 60 -K - -o /dev/null -w '%{http_code}' -F "chat_id=$id" -F "$campo=@$arq")"
-    [ "$r" = "200" ] || echo "$(date '+%F %T') Telegram respondeu $r ao mandar a voz para um dos chats" >> "$ERRO/log.txt"
-  done
+  r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$TOKEN" "$metodo" | \
+       curl -sS -m 60 -K - -o /dev/null -w '%{http_code}' -F "chat_id=$destino" -F "$campo=@$arq")"
+  [ "$r" = "200" ] || echo "$(date '+%F %T') Telegram respondeu $r ao mandar a voz para $destino" >> "$ERRO/log.txt"
   rm -rf "$tmp"
 done
 exit 0
