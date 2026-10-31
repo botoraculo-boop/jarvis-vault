@@ -1,6 +1,6 @@
 ---
 tipo: indice
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # VAULT-INDEX
@@ -8,7 +8,7 @@ atualizado: 2026-10-30
 Mapa do vault. O Jarvis lê este arquivo e a [[memoria]] no começo de cada sessão e abre o resto só quando a tarefa pede: índice da pasta → nota-mestre → busca por palavra.
 
 ## Quem é você
-João Gabriel de Melo, de Brazlândia (DF). Analista de sistemas, não programador: tudo que precisar rodar vem passo a passo. Usa Windows (PowerShell) e Ubuntu com GPU em casa. Projetos principais: **Oráculo** e **The Miner**, os dois no VPS da Hostinger. O Jarvis é pessoal: só você fala com ele.
+João Gabriel de Melo (registro; nunca usar para me chamar — tratamento: Mestre), de Brazlândia (DF). Analista de sistemas, não programador: tudo que precisar rodar vem passo a passo. Usa Windows (PowerShell) e Ubuntu com GPU em casa. Projetos principais: **Oráculo** e **The Miner**, os dois no VPS da Hostinger. O Jarvis é pessoal: só você fala com ele.
 
 ## Pastas
 | Pasta | O que guarda | Índice |
