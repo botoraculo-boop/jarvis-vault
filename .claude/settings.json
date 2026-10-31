@@ -6,7 +6,11 @@
       "Bash(sudo -n /opt/jarvis/bin/receita status)",
       "Bash(sudo -n /opt/jarvis/bin/receita ajuda)",
       "Bash(sudo -n /opt/jarvis/bin/receita fotos)",
-      "Bash(sudo -n /opt/jarvis/bin/receita logs *)"
+      "Bash(sudo -n /opt/jarvis/bin/receita logs *)",
+      "Bash(sudo /opt/jarvis/bin/receita status)",
+      "Bash(sudo /opt/jarvis/bin/receita ajuda)",
+      "Bash(sudo /opt/jarvis/bin/receita fotos)",
+      "Bash(sudo /opt/jarvis/bin/receita logs *)"
     ],
     "ask": [
       "Bash(sudo -n /opt/jarvis/bin/receita espelho*)",
@@ -18,7 +22,15 @@
       "Bash(sudo -n /opt/jarvis/bin/receita parar-jarvis*)",
       "Bash(sudo -n /opt/jarvis/bin/receita ligar-jarvis*)",
       "Edit(/CLAUDE.md)",
-      "mcp__hostinger-api"
+      "mcp__hostinger-api",
+      "Bash(sudo /opt/jarvis/bin/receita espelho*)",
+      "Bash(sudo /opt/jarvis/bin/receita backup*)",
+      "Bash(sudo /opt/jarvis/bin/receita reiniciar*)",
+      "Bash(sudo /opt/jarvis/bin/receita atualizar-oraculo*)",
+      "Bash(sudo /opt/jarvis/bin/receita atualizar-miner*)",
+      "Bash(sudo /opt/jarvis/bin/receita desfazer*)",
+      "Bash(sudo /opt/jarvis/bin/receita parar-jarvis*)",
+      "Bash(sudo /opt/jarvis/bin/receita ligar-jarvis*)"
     ],
     "deny": [
       "Read(~/.ssh/**)",

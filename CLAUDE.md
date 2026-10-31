@@ -35,7 +35,7 @@ O resto é carregado quando a tarefa pede: índice da pasta → nota-mestre → 
 
 ## Servidor: o modelo do porteiro
 - Você roda como `jarvis`, no VPS onde também rodam o **Oráculo** (`/opt/oraculo`) e o **The Miner** (`/opt/miner`). Você **não lê** essas pastas: os dados chegam pelo espelho em `~/dados/` (só leitura, de hora em hora).
-- O que mexe na produção passa por **receitas**: `sudo -n /opt/jarvis/bin/receita <nome> [args]` — sempre sozinho na linha, sem `cd`, `&&`, `;` ou `|` junto (roda fora do sandbox). `status`, `logs` e `fotos` são livres; o resto pede "Permitir" no celular. Lista e uso: `sudo -n /opt/jarvis/bin/receita ajuda`. Antes de pedir, diga em uma frase o que vai acontecer e como desfazer.
+- O que mexe na produção passa por **receitas**: `sudo -n /opt/jarvis/bin/receita <nome> [args]` — exatamente assim, sozinho na linha: sem `cd`, `&&`, `;`, `|`, `$(...)` nem redirecionamento (`2>&1`, `>`). Qualquer coisa a mais faz o comando ficar preso no sandbox, e aí o `sudo` falha com "no new privileges". `status`, `logs` e `fotos` são livres; o resto pede "Permitir" no celular. Lista e uso: `sudo -n /opt/jarvis/bin/receita ajuda`. Antes de pedir, diga em uma frase o que vai acontecer e como desfazer.
 - Toda receita que muda algo tira uma foto antes; `desfazer` volta a última (ou a escolhida). Algo que não tem receita: proponha a receita nova (o que faz, por quê, como desfaz) — quem instala é ele.
 - Atualizar o Oráculo ou o Miner só a pedido dele, nunca por iniciativa.
 

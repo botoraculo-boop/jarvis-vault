@@ -8,9 +8,8 @@
     "allowUnsandboxedCommands": false,
     "autoAllowBashIfSandboxed": true,
     "excludedCommands": [
-      "sudo -n /opt/jarvis/bin/receita",
       "sudo -n /opt/jarvis/bin/receita *",
-      "sudo -n /opt/jarvis/bin/receita:*"
+      "sudo /opt/jarvis/bin/receita *"
     ],
     "network": {
       "allowedDomains": [
