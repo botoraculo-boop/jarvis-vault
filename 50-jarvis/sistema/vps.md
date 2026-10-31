@@ -202,7 +202,7 @@ Se o espelho mostrar "ATENÇÃO: tabela nova fora do espelho", me mande a linha:
 
 - **Celular:** app Claude → Code → sessão **Jarvis**.
 - **PC:** app Claude desktop → aba Code → seletor de ambiente → New environment → SSH → `jarvis@2.25.247.175` → pasta `/home/jarvis/JARVIS`.
-- **Obsidian:** no PC, o plugin **Obsidian Git** (puxa e envia a cada 10 min) na pasta do vault. No celular, só leitura (você pode usar o app do GitHub ou o Obsidian com o mesmo plugin).
+- **Obsidian:** vault clonado no PC em `C:\Users\Naldim\Claude\jarvis-vault`. Plano (decidido em 31/10): plugin **Obsidian Git** com pull ao abrir e envio manual (botão), sem envio automático a cada 10 min. Até instalar o plugin: `git pull` no PowerShell antes de editar e `git push` depois. No celular, só leitura (você pode usar o app do GitHub ou o Obsidian com o mesmo plugin).
 - **Kill switch no celular (sem IA no caminho):** crie no celular uma chave SSH só para isso (no Android, o Termux com `ssh-keygen -t ed25519 -f ~/.ssh/parar_jarvis`; no iPhone, o app Atalhos → "Executar script por SSH" gera a chave) e cadastre-a assim [VPS root]:
   ```bash
   echo 'command="sudo -n /opt/jarvis/bin/receita parar-jarvis",restrict COLE-A-CHAVE-PUBLICA-DO-CELULAR' >> /home/jarvis/.ssh/authorized_keys
@@ -270,7 +270,7 @@ echo "Teste de voz do Jarvis. Se você está ouvindo isto, funcionou." > /home/j
 Em alguns segundos chega uma mensagem de voz no seu Telegram. Se não chegar: `cat /home/jarvis/.cache/jarvis/fala-erro/log.txt` mostra o motivo (chave errada, Voice ID errado, plano sem API).
 
 ## Teste de aceitação
-- [ ] No celular, a sessão Jarvis responde a `/briefing`, e a nota do dia aparece no Obsidian do PC (até 10 min).
+- [ ] No celular, a sessão Jarvis responde a `/briefing`, e a nota do dia aparece no Obsidian do PC depois do pull (o timer do VPS envia ao GitHub; o PC puxa ao abrir o Obsidian ou no PowerShell).
 - [ ] "rode `touch ~/teste-sandbox`" → falha (`Read-only file system` ou `Operation not permitted`).
 - [ ] "rode `sudo -n true`" → falha (dentro do sandbox, o `sudo` não funciona).
 - [ ] "rode `sudo -n /opt/jarvis/bin/receita status`" → mostra o status **sem** pedir Permitir.
