@@ -202,7 +202,7 @@ Se o espelho mostrar "ATENÇÃO: tabela nova fora do espelho", me mande a linha:
 
 - **Celular:** app Claude → Code → sessão **Jarvis**.
 - **PC:** app Claude desktop → aba Code → seletor de ambiente → New environment → SSH → `jarvis@2.25.247.175` → pasta `/home/jarvis/JARVIS`.
-- **Obsidian:** vault clonado no PC em `C:\Users\Naldim\Claude\jarvis-vault`. Plano (decidido em 31/10): plugin **Obsidian Git** com pull ao abrir e envio manual (botão), sem envio automático a cada 10 min. Até instalar o plugin: `git pull` no PowerShell antes de editar e `git push` depois. No celular, só leitura (você pode usar o app do GitHub ou o Obsidian com o mesmo plugin).
+- **Obsidian:** vault clonado no PC em `C:\Users\Naldim\Claude\jarvis-vault`. Plugin **Obsidian Git** v2.42.0 instalado em 31/10: pull ao abrir o Obsidian; envio manual (`Ctrl+P` → **Git: Commit-and-sync**); nada automático; conflitos sem lado preferido (resolva à mão, ver [[sincronizacao]]). Sem o Obsidian aberto, vale o PowerShell: `git pull` antes de editar e `git push` depois. No celular, só leitura (você pode usar o app do GitHub ou o Obsidian com o mesmo plugin).
 - **Kill switch no celular (sem IA no caminho):** crie no celular uma chave SSH só para isso (no Android, o Termux com `ssh-keygen -t ed25519 -f ~/.ssh/parar_jarvis`; no iPhone, o app Atalhos → "Executar script por SSH" gera a chave) e cadastre-a assim [VPS root]:
   ```bash
   echo 'command="sudo -n /opt/jarvis/bin/receita parar-jarvis",restrict COLE-A-CHAVE-PUBLICA-DO-CELULAR' >> /home/jarvis/.ssh/authorized_keys
