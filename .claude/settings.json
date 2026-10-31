@@ -3,36 +3,26 @@
   "autoMemoryEnabled": false,
   "permissions": {
     "allow": [
-      "Bash(sudo -n /opt/jarvis/bin/receita status)",
-      "Bash(sudo -n /opt/jarvis/bin/receita ajuda)",
-      "Bash(sudo -n /opt/jarvis/bin/receita fotos)",
-      "Bash(sudo -n /opt/jarvis/bin/receita logs *)",
-      "Bash(sudo /opt/jarvis/bin/receita status)",
-      "Bash(sudo /opt/jarvis/bin/receita ajuda)",
-      "Bash(sudo /opt/jarvis/bin/receita fotos)",
-      "Bash(sudo /opt/jarvis/bin/receita logs *)"
+      "mcp__receitas__status",
+      "mcp__receitas__ajuda",
+      "mcp__receitas__fotos",
+      "mcp__receitas__logs"
     ],
     "ask": [
-      "Bash(sudo -n /opt/jarvis/bin/receita espelho*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita backup*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita reiniciar*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita atualizar-oraculo*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita atualizar-miner*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita desfazer*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita parar-jarvis*)",
-      "Bash(sudo -n /opt/jarvis/bin/receita ligar-jarvis*)",
+      "mcp__receitas__espelho",
+      "mcp__receitas__backup",
+      "mcp__receitas__reiniciar",
+      "mcp__receitas__atualizar_oraculo",
+      "mcp__receitas__atualizar_miner",
+      "mcp__receitas__desfazer",
+      "mcp__receitas__parar_jarvis",
+      "mcp__receitas__ligar_jarvis",
       "Edit(/CLAUDE.md)",
-      "mcp__hostinger-api",
-      "Bash(sudo /opt/jarvis/bin/receita espelho*)",
-      "Bash(sudo /opt/jarvis/bin/receita backup*)",
-      "Bash(sudo /opt/jarvis/bin/receita reiniciar*)",
-      "Bash(sudo /opt/jarvis/bin/receita atualizar-oraculo*)",
-      "Bash(sudo /opt/jarvis/bin/receita atualizar-miner*)",
-      "Bash(sudo /opt/jarvis/bin/receita desfazer*)",
-      "Bash(sudo /opt/jarvis/bin/receita parar-jarvis*)",
-      "Bash(sudo /opt/jarvis/bin/receita ligar-jarvis*)"
+      "mcp__hostinger-api"
     ],
     "deny": [
+      "Bash(sudo *)",
+      "Bash(sudo)",
       "Read(~/.ssh/**)",
       "Read(~/.config/jarvis/**)",
       "Read(~/.claude/.credentials.json)",
@@ -54,10 +44,6 @@
       "Edit(/.gitignore)",
       "Bash(printenv*)",
       "Bash(env)",
-      "Bash(sudo -i*)",
-      "Bash(sudo su*)",
-      "Bash(sudo bash*)",
-      "Bash(sudo -s*)",
       "mcp__hostinger-api__billing_*",
       "Edit(/.git/**)",
       "Edit(~/.claude/**)",
@@ -70,7 +56,8 @@
       "Edit(~/.ssh/**)",
       "Edit(~/.gitconfig)",
       "Bash(git push*)",
-      "Bash(git -C * push*)"
+      "Bash(git -C * push*)",
+      "Edit(~/.claude.json)"
     ]
   },
   "hooks": {

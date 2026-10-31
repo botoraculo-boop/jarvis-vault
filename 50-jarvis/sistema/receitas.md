@@ -7,7 +7,7 @@ atualizado: 2026-10-30
 
 **O que é:** o único caminho do Jarvis até a produção. Um script de dono root, `/opt/jarvis/bin/receita` (fonte: `vps/bin/receita`), que o `jarvis` pode rodar com `sudo` e mais nada (`/etc/sudoers.d/jarvis`).
 
-**Como o Jarvis chama:** `sudo -n /opt/jarvis/bin/receita <receita> [args]`. Esse comando roda fora do sandbox (por configuração, `excludedCommands`), porque o sandbox desliga o `sudo`. `status`, `logs` e `fotos` são livres; as outras pedem **Permitir** no celular.
+**Como o Capi chama:** pelas ferramentas do conector `receitas` (`mcp__receitas__status`, `reiniciar`, ...), um programa de dono root (`/opt/jarvis/bin/mcp-receitas.py`, fonte `vps/bin/mcp-receitas.py`) que só sabe rodar `sudo -n /opt/jarvis/bin/receita <nome>` com os nomes e argumentos da lista. Por quê: os comandos de terminal do Claude rodam no sandbox, que liga o *no new privileges* e impede o `sudo` (confirmado em 30/10); a regra `excludedCommands`, que deveria tirar a receita do sandbox, não funcionou. O conector roda fora desse sandbox, como o do Telegram. `status`, `logs`, `fotos` e `ajuda` são livres; as outras pedem **Permitir**. O `sudo` pelo terminal é negado de vez.
 
 | Receita | Faz | Foto antes | Desfaz |
 |---|---|---|---|

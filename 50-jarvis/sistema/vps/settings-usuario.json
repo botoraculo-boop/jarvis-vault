@@ -7,10 +7,6 @@
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
     "autoAllowBashIfSandboxed": true,
-    "excludedCommands": [
-      "sudo -n /opt/jarvis/bin/receita *",
-      "sudo /opt/jarvis/bin/receita *"
-    ],
     "network": {
       "allowedDomains": [
         "airbnb.com",
@@ -39,7 +35,8 @@
         "~/repos/oraculo/.git/config",
         "~/repos/theminer/.git/hooks",
         "~/repos/theminer/.git/config",
-        "~/.gitconfig"
+        "~/.gitconfig",
+        "~/.claude.json"
       ],
       "denyRead": [
         "~/.ssh",
@@ -68,7 +65,9 @@
       "Edit(~/.bashrc)",
       "Edit(~/.local/**)",
       "Edit(~/.ssh/**)",
-      "Edit(~/.gitconfig)"
+      "Edit(~/.gitconfig)",
+      "Edit(~/.claude.json)",
+      "Bash(sudo *)"
     ],
     "defaultMode": "auto"
   },

@@ -14,7 +14,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 cd /
 
 ORIGEM_PADRAO=/home/jarvis/JARVIS/50-jarvis/sistema/vps
-BIN_OK="receita espelho.py remoto.sh telegram.sh rotina.sh notificar.sh git-sync.sh falar.sh"
+BIN_OK="receita espelho.py remoto.sh telegram.sh rotina.sh notificar.sh git-sync.sh falar.sh mcp-receitas.py"
 UNIDADES_OK="jarvis-remoto.service jarvis-telegram.service jarvis-briefing.service jarvis-briefing.timer
 jarvis-revisao.service jarvis-revisao.timer jarvis-reinicio.service jarvis-reinicio.timer jarvis-git.service
 jarvis-git.timer jarvis-espelho.service jarvis-espelho.timer jarvis-fala.service jarvis-fala.path"

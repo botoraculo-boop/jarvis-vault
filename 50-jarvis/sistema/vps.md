@@ -183,7 +183,11 @@ install -m 700 /home/jarvis/JARVIS/50-jarvis/sistema/vps/instalar-servicos.sh /r
 less /root/instalar-servicos.sh            # leia (q para sair): é ele que vai rodar como root
 bash /root/instalar-servicos.sh
 ```
-Sempre rode a cópia do root, nunca o arquivo do vault (o `jarvis` consegue escrever no vault). O instalador copia o kit para uma pasta só do root, mostra a diferença **completa** e só instala com `sim`. Depois:
+Sempre rode a cópia do root, nunca o arquivo do vault (o `jarvis` consegue escrever no vault). O instalador copia o kit para uma pasta só do root, mostra a diferença **completa** e só instala com `sim`. Registre o conector das receitas para o usuário jarvis:
+```bash
+sudo -iu jarvis claude mcp add --scope user receitas -- /usr/bin/python3 -I /opt/jarvis/bin/mcp-receitas.py
+```
+Depois:
 ```bash
 systemctl enable --now jarvis-espelho.timer && systemctl start jarvis-espelho.service
 cat /var/lib/jarvis-dados/espelho.log       # oraculo.db, miner.db e estudo.db com "ok"
