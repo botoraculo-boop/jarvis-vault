@@ -23,3 +23,7 @@ Thumbs.db
 
 # fila de falas do Jarvis (texto que vira voz; some depois de enviado)
 .fala/
+
+# lixo do Python
+__pycache__/
+*.pyc
