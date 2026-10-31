@@ -1,6 +1,6 @@
 ---
 tipo: runbook
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # Jarvis no VPS — instalação
@@ -198,6 +198,8 @@ systemctl status jarvis-remoto --no-pager    # esperado: active (running)
 Se o espelho mostrar "ATENÇÃO: tabela nova fora do espelho", me mande a linha: é uma tabela que o espelho ainda não conhece (fica de fora por segurança).
 
 ## Passo 8 — seus aparelhos
+> **Feito em 31/10/2026** (testado por ele; detalhe na nota [[2026-10-31]]).
+
 - **Celular:** app Claude → Code → sessão **Jarvis**.
 - **PC:** app Claude desktop → aba Code → seletor de ambiente → New environment → SSH → `jarvis@2.25.247.175` → pasta `/home/jarvis/JARVIS`.
 - **Obsidian:** no PC, o plugin **Obsidian Git** (puxa e envia a cada 10 min) na pasta do vault. No celular, só leitura (você pode usar o app do GitHub ou o Obsidian com o mesmo plugin).
@@ -208,6 +210,8 @@ Se o espelho mostrar "ATENÇÃO: tabela nova fora do espelho", me mande a linha:
   Conectar com essa chave (`ssh -i ~/.ssh/parar_jarvis jarvis@2.25.247.175`) para o Jarvis na hora, faz só isso e mais nada. Para ligar de novo: [VPS root] `sudo -u jarvis sudo -n /opt/jarvis/bin/receita ligar-jarvis`.
 
 ## Passo 9 — fechar o root por senha [PC] e [VPS root]
+> **Feito em 31/10/2026** (testado por ele): root só entra pela chave SSH do PC. O arquivo instalado é `/etc/ssh/sshd_config.d/00-jarvis-seguranca.conf` (não o `10-jarvis.conf` do bloco abaixo), com as mesmas três linhas. Emergência: terminal do navegador no hPanel. Pendente: cópia da chave privada fora do PC.
+
 Só depois de entrar como `jarvis` pela chave (passo 3). Primeiro, a sua chave também no root:
 ```bash
 install -d -m 700 /root/.ssh
@@ -294,6 +298,8 @@ Em alguns segundos chega uma mensagem de voz no seu Telegram. Se não chegar: `c
 | Desfazer uma mudança de receita | `receita fotos` e `receita desfazer <id>` (pelo Jarvis, com Permitir; ou como root) |
 | Voz não chega | `cat ~jarvis/.cache/jarvis/fala-erro/log.txt` |
 | Desligar só a voz | `systemctl disable --now jarvis-fala.path` |
+| Telegram não responde depois de reiniciar o `jarvis-telegram` (kill switch + ligar, ou restarts seguidos): o plugin não sobe (✘ no `/mcp`, sem processo `bun`) | Espere 1 min. Sem resposta: [VPS root] `sudo -iu jarvis tmux -L jarvis-telegram attach` → `/mcp` → telegram → Reconnect (sair: `Ctrl+B`, depois `D`); ou `systemctl restart jarvis-telegram`. As mensagens não se perdem. Hipótese não confirmada: conflito de conexão com o Telegram logo após a parada (só uma escuta por bot). Visto em 31/10, de novo às 17:05 |
+| Ler o git do vault como root | `sudo -u jarvis git -C /home/jarvis/JARVIS ...`. **Nunca** `git safe.directory` como root na pasta do jarvis: risco de escalada (lição de 31/10) |
 | Desligar tudo | `systemctl disable --now jarvis-remoto jarvis-telegram jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer` |
 
 Arquivos do kit: `50-jarvis/sistema/vps/` — `instalar-servicos.sh`, `settings-usuario.json`, `bin/`, `systemd/`, `sudoers/`. Peças explicadas em [[sistema]].
