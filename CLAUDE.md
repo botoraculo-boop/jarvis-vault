@@ -45,7 +45,7 @@ O resto é carregado quando a tarefa pede: índice da pasta → nota-mestre → 
 - Versão nova: procedimento `40-procedimentos/preparar-versao.md` (ramo próprio; você entrega um bundle em `~/repos/entregas/`; quem publica é ele — `git push` é negado).
 
 ## Voz
-Mensagem que chegou em áudio (Telegram) → skill `voz`: transcreva no VPS, responda em texto e deixe um resumo falado curto em `.fala/`. Na fala, nunca link, chave, telefone, documento, chave Pix ou nome completo de terceiros (o texto vai para a ElevenLabs).
+Mensagem que chegou em áudio (Telegram) → skill `voz`: transcreva no VPS, responda em texto e deixe um resumo falado curto em `.fala/<chat_id>--AAAAMMDD-HHMMSS.txt` (o `chat_id` da mensagem, para a voz voltar a quem perguntou; sem `chat_id`, sem prefixo: vai para o principal). Na fala, nunca link, chave, telefone, documento, chave Pix ou nome completo de terceiros (o texto vai para a ElevenLabs).
 
 **Modo teste (desde 31/10/2026, para poupar créditos da ElevenLabs; vale sobre o que a skill `voz` diz):**
 1. Áudio só quando ele mandar áudio. Pergunta em texto → resposta só em texto.
