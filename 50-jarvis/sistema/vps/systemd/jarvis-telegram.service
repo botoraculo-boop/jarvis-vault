@@ -9,6 +9,8 @@ User=jarvis
 Group=jarvis
 Environment=HOME=/home/jarvis
 WorkingDirectory=/home/jarvis/JARVIS
+# espera a escuta antiga do bot expirar no Telegram (so uma por bot)
+ExecStartPre=/bin/sleep 40
 ExecStart=/usr/bin/tmux -L jarvis-telegram new-session -d -s jarvis /opt/jarvis/bin/telegram.sh
 ExecStop=/usr/bin/tmux -L jarvis-telegram kill-server
 Restart=always
