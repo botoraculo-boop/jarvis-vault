@@ -210,7 +210,7 @@ Se o espelho mostrar "ATENÇÃO: tabela nova fora do espelho", me mande a linha:
   Conectar com essa chave (`ssh -i ~/.ssh/parar_jarvis jarvis@2.25.247.175`) para o Jarvis na hora, faz só isso e mais nada. Para ligar de novo: [VPS root] `sudo -u jarvis sudo -n /opt/jarvis/bin/receita ligar-jarvis`.
 
 ## Passo 9 — fechar o root por senha [PC] e [VPS root]
-> **Feito em 31/10/2026** (testado por ele): root só entra pela chave SSH do PC. O arquivo instalado é `/etc/ssh/sshd_config.d/00-jarvis-seguranca.conf` (não o `10-jarvis.conf` do bloco abaixo), com as mesmas três linhas. Emergência: terminal do navegador no hPanel. Pendente: cópia da chave privada fora do PC.
+> **Feito em 31/10/2026** (testado por ele): root só entra pela chave SSH do PC. O arquivo instalado é `/etc/ssh/sshd_config.d/00-jarvis-seguranca.conf` (não o `10-jarvis.conf` do bloco abaixo), com as mesmas três linhas. Emergência: terminal do navegador no hPanel. **Chave do PC protegida em 31/10/2026** (feito por ele): a chave SSH privada do PC (a que entra no root) agora tem senha, o agente de SSH do Windows está ligado e há uma cópia de segurança no Google Drive dele. Senha e conteúdo da chave não ficam no vault.
 
 Só depois de entrar como `jarvis` pela chave (passo 3). Primeiro, a sua chave também no root:
 ```bash
