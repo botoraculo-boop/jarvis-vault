@@ -1,6 +1,6 @@
 ---
 tipo: decisoes
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # Decisões
@@ -15,7 +15,7 @@ Formato: data — decisão — porquê. **Proposta** = sugestão do Jarvis esper
 ## Sistema Jarvis
 - 2026-10-30 — As receitas passam a ser chamadas por um conector próprio (`mcp-receitas.py`, dono root), não pelo terminal. Porquê: o `sudo` não roda dentro do sandbox (confirmado) e a regra `excludedCommands` não funcionou nessa configuração. Substitui a proposta de "receita fora do sandbox por excludedCommands".
 - 2026-10-30 — O assistente se chama **Capi** em tudo que fala com você (app, Telegram, voz). "Jarvis" fica como nome do sistema: usuário, pastas, serviços e notas técnicas não mudam. Porquê: escolha sua; trocar o nome do sistema quebraria caminhos sem ganho.
-- 2026-10-30 — Voz já na instalação, sem esperar a semana de uso (mudança pedida por você: o roadmap mandava esperar). Ida: Whisper local no VPS. Volta: ElevenLabs, plano grátis, só quando a mensagem veio em áudio ou você pedir, sempre com o texto junto. Porquê: você quer testar a conversa por voz já. O Telegram sobe junto, porque é por ele que a voz vai e volta.
+- 2026-10-30 — Voz já na instalação, sem esperar a semana de uso (mudança pedida por você: o roadmap mandava esperar). Ida: Whisper local no VPS. Volta: ElevenLabs, plano grátis, só quando a mensagem veio em áudio ou você pedir, sempre com o texto junto. Porquê: você quer testar a conversa por voz já. O Telegram sobe junto, porque é por ele que a voz vai e volta. (alterada em 2026-10-31: ver modo teste da voz)
 - 2026-10-30 — **Proposta (montagem do kit):** o porteiro usa `sudo` restrito a um arquivo só (`/opt/jarvis/bin/receita`), e esse comando roda fora do sandbox por configuração (`excludedCommands`), com Permitir para tudo que muda algo. Porquê: dentro do sandbox (bubblewrap) o `sudo` não funciona — deduzido do funcionamento do bubblewrap, a confirmar no teste de aceitação. Alternativa descartada: fila de pedidos vigiada pelo systemd, porque o Jarvis conseguiria escrever o pedido sem passar pelo Permitir.
 - 2026-10-30 — **Proposta (montagem do kit):** o espelho grava em `/var/lib/jarvis-dados` (fora da casa do `jarvis`), e o instalador roda de uma cópia do root. Porquê: a revisão de segurança mostrou que, com a pasta dentro da casa dele, o `jarvis` poderia plantar atalhos que o root seguiria (ler a chave do Miner, sobrescrever o banco do Oráculo).
 - 2026-10-30 — **Proposta (montagem do kit):** o espelho usa **lista branca** de tabelas, não lista negra. Porquê: tabela de contas que surgir numa versão nova dos robôs fica de fora sozinha; o log avisa para você decidir.
@@ -39,3 +39,4 @@ Formato: data — decisão — porquê. **Proposta** = sugestão do Jarvis esper
 - 2026-10-29 — **Proposta:** segredos nunca no vault.
 - 2026-10-29 — **Proposta:** commit automático a cada resposta do Jarvis (desligável com `JARVIS_AUTOCOMMIT=0`).
 - 2026-10-29 — **Proposta:** `/ocupacao` audita os iCals (só leitura) para confirmar os bloqueios manuais.
+- 2026-10-31 — Modo teste da voz; trocar por modo melhor depois. Áudio só em resposta a áudio; fala de até ~15 s com a resposta direta; texto depois só com o detalhe que não coube, sem repetir. Porquê: economizar créditos da ElevenLabs. Muda em parte a decisão de 30/10 sobre voz ("sempre com o texto junto").
