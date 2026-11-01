@@ -22,5 +22,6 @@ O que deu errado (ou certo por pouco) e o que fazer da próxima vez. Uma seção
 - 2026-10-22 — O ambiente do Claude reiniciou e levou commits que não tinham sido entregues. — Entregar (bundle/push) ao fim de cada etapa, não só no fim do dia.
 
 ## The Miner
+- 2026-11-01 — Malt somou os trades do modo demo (mercado inventado, datas aceleradas até 14/11) no relatório do dia e o chamou de "ponto fraco". — Antes de analisar o miner.db, ler no PROJETO.md/código o que cada modo é; filtrar `modo != 'demo'`.
 
 ## Mar & Lago

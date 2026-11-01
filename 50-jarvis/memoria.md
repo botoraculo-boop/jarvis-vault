@@ -25,6 +25,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 ## Projetos (detalhe em `10-projetos/`)
 - [[oraculo]] e [[the-miner]] são os principais; o Jarvis os serve primeiro.
 - [[mar-e-lago]], [[educabet]], [[poker-das-lendas]].
+- The Miner: o modo **demo** (demonstração, mercado inventado e acelerado, datas falsas) foi descontinuado e fica **fora dos relatórios**; contam a carteira de papel (simulação + sinais), testnet e real (pedido seu em 01/11).
 
 ## Infra
 - O assistente se chama **Capi** (decidido em 30/10); "Jarvis" é o nome do sistema (usuário, pastas, serviços).
