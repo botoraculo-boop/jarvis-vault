@@ -1,6 +1,6 @@
 ---
 tipo: licoes
-atualizado: 2026-10-30
+atualizado: 2026-11-01
 ---
 
 # Lições
@@ -15,6 +15,8 @@ O que deu errado (ou certo por pouco) e o que fazer da próxima vez. Uma seção
 - 2026-10-30 — Confirmado na prática: dentro do sandbox o `sudo` falha ("no new privileges"). — A receita só funciona pela regra `excludedCommands`; conferir no teste de aceitação.
 - 2026-10-30 — A chave do vault foi cadastrada no GitHub sem "Allow write access" e a sincronização falhou em silêncio por 1 h. — Depois de cadastrar chave, rodar `systemctl start jarvis-git` e ler o log.
 - 2026-10-30 — No modo Manual, o Capi pedia Permitir para cada consulta e cada resposta no Telegram; inviável. — Sessões no modo automático; só as receitas que mudam algo pedem Permitir.
+
+- 2026-11-01 — O Capi ficou sem o plugin do Telegram das 04:30 às 14:20: a sessão subiu no reinício diário sem abrir o plugin (bug conhecido do Claude Code). — Vigia automático: `jarvis-vigia.timer` (a cada 5 min) reinicia o bot que ficar ~10 min sem plugin e avisa no Telegram; até 3 reinícios por bot em 3 h (ver [[servicos]]).
 
 ## Oráculo
 - 2026-10-22 — O ambiente do Claude reiniciou e levou commits que não tinham sido entregues. — Entregar (bundle/push) ao fim de cada etapa, não só no fim do dia.

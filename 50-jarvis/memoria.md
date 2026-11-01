@@ -1,6 +1,6 @@
 ---
 tipo: memoria
-atualizado: 2026-10-31
+atualizado: 2026-11-01
 ---
 
 # Memória do Jarvis
@@ -28,6 +28,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 
 ## Infra
 - O assistente se chama **Capi** (decidido em 30/10); "Jarvis" é o nome do sistema (usuário, pastas, serviços).
+- Dois agentes no mesmo vault, divididos por conversa (01/11): **Capi** no bot 1 e **Malt** no bot 2 do Telegram; mesmas regras, cada um assina as próprias entradas na nota diária e lê as do outro antes de agir.
 - VPS Hostinger 2.25.247.175, Ubuntu 24.04, 7,8 GB de RAM. Roda Oráculo, The Miner e o Jarvis (usuário `jarvis`).
 - Vault sincronizado pelo Git (GitHub privado); no celular, Obsidian para leitura.
 
