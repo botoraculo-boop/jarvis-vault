@@ -3,4 +3,4 @@ Description=Jarvis: reinicia as sessões (contexto limpo e atualizações aplica
 
 [Service]
 Type=oneshot
-ExecStart=/bin/systemctl try-restart jarvis-remoto.service jarvis-telegram.service
+ExecStart=/bin/systemctl try-restart jarvis-remoto.service jarvis-telegram.service jarvis-telegram-2.service

@@ -5,6 +5,7 @@
 #   ~/.config/jarvis/voz.env:  ELEVENLABS_API_KEY=...  ELEVENLABS_VOICE_ID=...  [ELEVENLABS_MODEL=eleven_multilingual_v2]
 # DESTINO: nome do arquivo "<chat_id>--<qualquer coisa>.txt" manda só para esse chat, se ele estiver em PERMITIDOS.
 # Sem ID, ID fora da lista ou nome estranho: vai só para o chat principal (primeiro ID de TELEGRAM_CHAT_ID).
+# BOT: "<chat_id>--bot2--<qualquer coisa>.txt" sai pelo segundo bot (token em ~/.claude/channels/telegram-2); o resto, pelo principal.
 set -u
 export PATH=/usr/bin:/bin
 FILA="$HOME/JARVIS/.fala"
@@ -21,6 +22,7 @@ VOZ="$(valor ELEVENLABS_VOICE_ID "$HOME/.config/jarvis/voz.env")"
 MODELO="$(valor ELEVENLABS_MODEL "$HOME/.config/jarvis/voz.env")"; MODELO="${MODELO:-eleven_multilingual_v2}"
 CHAT="$(valor TELEGRAM_CHAT_ID "$HOME/.config/jarvis/notificacao.env")"   # o primeiro é o principal
 TOKEN="$(valor TELEGRAM_BOT_TOKEN "$HOME/.claude/channels/telegram/.env")"
+TOKEN2="$(valor TELEGRAM_BOT_TOKEN "$HOME/.claude/channels/telegram-2/.env")"
 [[ "$VOZ" =~ ^[A-Za-z0-9]{10,40}$ ]] || VOZ=""
 [[ "$MODELO" =~ ^[a-z0-9_]{3,60}$ ]] || MODELO=eleven_multilingual_v2
 PRINCIPAL="${CHAT%%,*}"
@@ -43,6 +45,11 @@ for f in "$FILA"/*; do
     for p in $PERMITIDOS; do [ "$pedido" = "$p" ] && destino="$p"; done
     [ "$destino" = "$pedido" ] || echo "$(date '+%F %T') ID $pedido fora da lista; fala mandada ao principal" >> "$ERRO/log.txt"
   fi
+  # por qual bot: --bot2-- no nome usa o segundo bot (se ele tiver token); senão, o principal
+  tok="$TOKEN"
+  if [[ "$nome" =~ ^-?[0-9]+--bot2-- ]]; then
+    if [ -n "$TOKEN2" ]; then tok="$TOKEN2"; else echo "$(date '+%F %T') bot 2 sem token; fala mandada pelo principal" >> "$ERRO/log.txt"; fi
+  fi
   # limite por hora
   hora="$(date +%Y%m%d%H)"; n=0
   [ -f "$CONTA" ] && [ "$(cut -d' ' -f1 "$CONTA")" = "$hora" ] && n="$(cut -d' ' -f2 "$CONTA")"
@@ -64,7 +71,7 @@ for f in "$FILA"/*; do
   else
     arq="$tmp/fala.mp3"; metodo=sendAudio; campo=audio
   fi
-  r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$TOKEN" "$metodo" | \
+  r="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$tok" "$metodo" | \
        curl -sS -m 60 -K - -o /dev/null -w '%{http_code}' -F "chat_id=$destino" -F "$campo=@$arq")"
   [ "$r" = "200" ] || echo "$(date '+%F %T') Telegram respondeu $r ao mandar a voz para $destino" >> "$ERRO/log.txt"
   rm -rf "$tmp"

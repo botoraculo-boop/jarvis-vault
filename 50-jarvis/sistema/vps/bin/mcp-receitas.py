@@ -29,7 +29,7 @@ FERRAMENTAS = {
     "fotos": ("fotos", "Lista as fotos guardadas antes de cada mudança (o que pode ser desfeito). Só lê.", {}, [], 30),
     "logs": ("logs", "Últimas linhas do log de um serviço. Só lê.",
              {"alvo": {"type": "string", "enum": ["oraculo", "oraculo-atualizar", "miner", "caddy", "jarvis-remoto",
-                                                  "jarvis-telegram", "jarvis-briefing", "jarvis-revisao", "jarvis-git",
+                                                  "jarvis-telegram", "jarvis-telegram-2", "jarvis-briefing", "jarvis-revisao", "jarvis-git",
                                                   "jarvis-espelho", "jarvis-reinicio", "jarvis-fala"]},
               "linhas": {"type": "integer", "minimum": 1, "maximum": 300}}, ["alvo"], 60),
     "espelho": ("espelho", "Atualiza agora o espelho só de leitura dos bancos do Oráculo e do Miner.", {}, [], 1800),

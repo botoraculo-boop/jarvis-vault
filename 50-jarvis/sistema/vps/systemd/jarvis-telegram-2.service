@@ -1,0 +1,23 @@
+[Unit]
+Description=Jarvis: sessão com o segundo bot do Telegram
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=jarvis
+Group=jarvis
+Environment=HOME=/home/jarvis
+WorkingDirectory=/home/jarvis/JARVIS
+# espera a escuta antiga do bot expirar no Telegram (so uma por bot)
+ExecStartPre=/bin/sleep 40
+ExecStart=/usr/bin/tmux -L jarvis-telegram-2 new-session -d -s jarvis /opt/jarvis/bin/telegram.sh 2
+ExecStop=/usr/bin/tmux -L jarvis-telegram-2 kill-server
+Restart=always
+RestartSec=30
+Nice=10
+MemoryHigh=2G
+MemoryMax=2560M
+
+[Install]
+WantedBy=multi-user.target

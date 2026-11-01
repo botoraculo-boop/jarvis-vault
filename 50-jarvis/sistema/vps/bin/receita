@@ -21,7 +21,7 @@ ORACULO=/opt/oraculo
 ORACULO_LIB=/var/lib/oraculo
 MINER=/opt/miner
 MINER_BACKUPS=/opt/miner-backups
-JARVIS_UNIDADES="jarvis-remoto jarvis-telegram"
+JARVIS_UNIDADES="jarvis-remoto jarvis-telegram jarvis-telegram-2"
 
 registrar() { mkdir -p "$(dirname "$LOG")"; echo "$(date '+%F %T') [$QUEM] $*" >> "$LOG"; logger -t jarvis-receita -- "[$QUEM] $*" || true; }
 erro() { echo "ERRO: $*" >&2; registrar "ERRO: $*"; exit 1; }
@@ -80,7 +80,7 @@ servico_de() {  # nome curto -> unidade systemd (lista fechada)
     oraculo-atualizar) echo oraculo-atualizar ;;
     miner) echo miner ;;
     caddy) echo caddy ;;
-    jarvis-remoto|jarvis-telegram|jarvis-briefing|jarvis-revisao|jarvis-git|jarvis-espelho|jarvis-reinicio|jarvis-fala) echo "$1" ;;
+    jarvis-remoto|jarvis-telegram|jarvis-telegram-2|jarvis-briefing|jarvis-revisao|jarvis-git|jarvis-espelho|jarvis-reinicio|jarvis-fala) echo "$1" ;;
     *) return 1 ;;
   esac
 }
@@ -102,14 +102,14 @@ Receitas (sudo -n /opt/jarvis/bin/receita <receita> ...):
                                    ele confere se o commit está na main e volta sozinho se a versão não subir)
     atualizar-miner                foto + pedido ao atualizador do Miner (o mesmo do botão Atualizar do painel)
     desfazer [id-da-foto]          volta a mudança da última foto (ou da escolhida)
-    parar-jarvis                   KILL SWITCH: para todas as sessões do Jarvis (Remote Control e Telegram)
+    parar-jarvis                   KILL SWITCH: para todas as sessões do Jarvis (Remote Control e os dois bots do Telegram)
     ligar-jarvis                   liga de novo as sessões
 TXT
 }
 
 r_status() {
   echo "== Serviços"
-  for u in oraculo oraculo-atualizar.path miner caddy jarvis-remoto jarvis-telegram jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer; do
+  for u in oraculo oraculo-atualizar.path miner caddy jarvis-remoto jarvis-telegram jarvis-telegram-2 jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer; do
     printf '  %-24s %s\n' "$u" "$(systemctl is-active "$u" 2>/dev/null || true)"
   done
   echo "== Versões"
@@ -218,6 +218,7 @@ r_ligar_jarvis() {
   systemctl start jarvis-remoto jarvis-briefing.timer jarvis-revisao.timer jarvis-git.timer
   systemctl is-enabled --quiet jarvis-fala.path 2>/dev/null && systemctl start jarvis-fala.path || true
   systemctl is-enabled --quiet jarvis-telegram 2>/dev/null && systemctl start jarvis-telegram || true
+  systemctl is-enabled --quiet jarvis-telegram-2 2>/dev/null && systemctl start jarvis-telegram-2 || true
   ok "Jarvis ligado"
 }
 
