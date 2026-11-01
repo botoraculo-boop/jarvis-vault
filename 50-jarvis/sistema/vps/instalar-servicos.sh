@@ -14,10 +14,10 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 cd /
 
 ORIGEM_PADRAO=/home/jarvis/JARVIS/50-jarvis/sistema/vps
-BIN_OK="receita espelho.py remoto.sh telegram.sh rotina.sh notificar.sh git-sync.sh falar.sh mcp-receitas.py"
+BIN_OK="receita espelho.py remoto.sh telegram.sh rotina.sh notificar.sh git-sync.sh falar.sh mcp-receitas.py vigia-telegram.sh"
 UNIDADES_OK="jarvis-remoto.service jarvis-telegram.service jarvis-telegram-2.service jarvis-briefing.service jarvis-briefing.timer
 jarvis-revisao.service jarvis-revisao.timer jarvis-reinicio.service jarvis-reinicio.timer jarvis-git.service
-jarvis-git.timer jarvis-espelho.service jarvis-espelho.timer jarvis-fala.service jarvis-fala.path"
+jarvis-git.timer jarvis-espelho.service jarvis-espelho.timer jarvis-fala.service jarvis-fala.path jarvis-vigia.service jarvis-vigia.timer"
 
 ok()   { printf '  [ok] %s\n' "$*"; }
 erro() { printf '  [ERRO] %s\n' "$*" >&2; exit 1; }
@@ -41,7 +41,7 @@ principal() {
   [ "$(ls "$K/sudoers")" = "jarvis" ] || erro "em sudoers/ só pode existir o arquivo jarvis"
   # toda unidade de serviço que não é do root precisa dizer User=jarvis
   for f in "$K"/systemd/*.service; do
-    case "$(basename "$f")" in jarvis-reinicio.service|jarvis-espelho.service) ;; *)
+    case "$(basename "$f")" in jarvis-reinicio.service|jarvis-espelho.service|jarvis-vigia.service) ;; *)
       grep -qx 'User=jarvis' "$f" || erro "$(basename "$f") não roda como jarvis" ;; esac
   done
 

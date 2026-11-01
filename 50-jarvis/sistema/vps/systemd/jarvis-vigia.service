@@ -1,0 +1,8 @@
+[Unit]
+Description=Jarvis: vigia do Telegram (reinicia o bot cujo plugin sumiu)
+
+[Service]
+Type=oneshot
+ExecStart=/opt/jarvis/bin/vigia-telegram.sh
+TimeoutStartSec=2min
+Nice=10

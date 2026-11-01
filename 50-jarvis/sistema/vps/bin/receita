@@ -80,7 +80,7 @@ servico_de() {  # nome curto -> unidade systemd (lista fechada)
     oraculo-atualizar) echo oraculo-atualizar ;;
     miner) echo miner ;;
     caddy) echo caddy ;;
-    jarvis-remoto|jarvis-telegram|jarvis-telegram-2|jarvis-briefing|jarvis-revisao|jarvis-git|jarvis-espelho|jarvis-reinicio|jarvis-fala) echo "$1" ;;
+    jarvis-remoto|jarvis-telegram|jarvis-telegram-2|jarvis-briefing|jarvis-revisao|jarvis-git|jarvis-espelho|jarvis-reinicio|jarvis-fala|jarvis-vigia) echo "$1" ;;
     *) return 1 ;;
   esac
 }
@@ -109,7 +109,7 @@ TXT
 
 r_status() {
   echo "== Serviços"
-  for u in oraculo oraculo-atualizar.path miner caddy jarvis-remoto jarvis-telegram jarvis-telegram-2 jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer; do
+  for u in oraculo oraculo-atualizar.path miner caddy jarvis-remoto jarvis-telegram jarvis-telegram-2 jarvis-fala.path jarvis-briefing.timer jarvis-revisao.timer jarvis-reinicio.timer jarvis-git.timer jarvis-espelho.timer jarvis-vigia.timer; do
     printf '  %-24s %s\n' "$u" "$(systemctl is-active "$u" 2>/dev/null || true)"
   done
   echo "== Versões"
