@@ -1,6 +1,6 @@
 ---
 tipo: indice
-atualizado: 2026-10-30
+atualizado: 2026-11-03
 ---
 
 # Projetos
@@ -14,3 +14,4 @@ Uma nota-resumo por projeto. O vault guarda status, prioridades, decisões suas 
 - [[educabet]] — "a missão": o curso transcrito virando base de conhecimento
 - [[poker-das-lendas]] — o home game e a marca
 - [[jarvis]] — este sistema
+- [[canal-ciencia]] — canal de divulgação científica (vídeos a partir de artigos, explicação visual em Remotion)
