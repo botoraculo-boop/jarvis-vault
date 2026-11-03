@@ -19,6 +19,7 @@ Fontes em `vps/systemd/`; instalados em `/etc/systemd/system` pelo `instalar-ser
 | `jarvis-reinicio.timer` | root | `systemctl try-restart` das sessões: contexto limpo, atualizações do Claude aplicadas | todo dia, 04:30 |
 | `jarvis-git.timer` | jarvis | `git-sync.sh` ([[sincronizacao]]) | a cada 10 min |
 | `jarvis-espelho.timer` | root (`ProtectHome=read-only`) | `espelho.py` ([[espelho]]), grava em `/var/lib/jarvis-dados` | de hora em hora |
+| `audion` | jarvis, fora do kit (fonte: `~/repos/audion/audion.service`) | Fila do **Audion** (vídeos do YouTube → prints + transcrição): `rodar_limitado.sh audion_daan.ini`. CPUQuota 35%, Nice 19, MemoryHigh 1,6G / MemoryMax 2G; o script congela o Audion com a VPS acima de 55% (créditos de CPU da Hostinger, ver [[licoes]]). Instalado pelo Mestre em 03/11 com `enable` e uma partida única às 04:40 (`audion-partida.timer`). Ver: `journalctl -u audion -n 30`. Desfaz: `systemctl disable --now audion; rm /etc/systemd/system/audion.service; systemctl daemon-reload` | ao ligar a VPS; termina quando a fila acaba |
 
 **Limites:** `Nice=10` (espelho 15, disco em "idle"); `jarvis-remoto` MemoryHigh 2G / MemoryMax 2,5G; cada Telegram 2G / 2,5G (o Whisper roda dentro dele); rotinas 1G / 1,5G. Os robôs não têm limite: em disputa de memória, quem cede é o Jarvis.
 
