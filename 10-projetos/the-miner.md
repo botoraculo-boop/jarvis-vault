@@ -11,7 +11,8 @@ aliases: [The Miner, theminer, Miner]
 **Em uma frase:** robô de trading didático em perpétuos de cripto na Hyperliquid, com estratégias em checklist, gestão de risco por área e painel web; hoje em **Testnet** (dinheiro fictício, mercado real), validando métodos.
 
 ## Status (30/10/2026)
-- Versão no repositório: **0.5.4** (28/10, atualizar pelo painel). Confirmar a que está rodando no VPS (receita `status`).
+- Versão: **0.9.10** no GitHub e no VPS (03/11/2026, receita `status`). É a versão mais leve: a projeção do radar e o preparo da Vela e da Prisma reaproveitam cálculos, e o banco grava menos; nenhum resultado muda (detalhes na nota diária de 03/11).
+- Repositório git do Mestre: `C:\Users\Naldim\Claude\theminer` (clonado em 03/11). Não existe clone da 0.9.9 no VPS; `~/repos/theminer` está parado na 0.5.4 e não consegue fazer fetch. O repositório de trabalho do Malt está em `~/repos/theminer-0910`.
 - Servidor: mesmo VPS, `/opt/miner`, serviço `miner`, painel só em `127.0.0.1:8777`. Atualizador `/opt/miner/ferramentas/atualizar.sh`, cópias em `/opt/miner-backups/` (as 5 últimas).
 - Estratégias: referência (Surfista, Caçador, Elástico), Vela Trader (4 setups do curso) e Inner Circle/ICT (Vassoura, Bala de Prata — **sem vantagem comprovada**, só no papel até o teste em cripto). G.M.I só informativa.
 
