@@ -1,6 +1,6 @@
 ---
 tipo: memoria
-atualizado: 2026-11-01
+atualizado: 2026-11-04
 ---
 
 # Memória do Jarvis
@@ -25,6 +25,7 @@ Lida no começo de toda sessão. Curta de propósito: fatos estáveis e o jeito 
 ## Projetos (detalhe em `10-projetos/`)
 - [[oraculo]] e [[the-miner]] são os principais; o Jarvis os serve primeiro.
 - [[mar-e-lago]], [[educabet]], [[poker-das-lendas]].
+- Oráculo em pausa (dito por você em 04/11): a plataforma que fornece os dados está pausada, e o foco atual é o Miner e outros projetos. Zero entradas ou jogos novos é esperado; não tratar como falha. Volta "em breve", sem data.
 - The Miner: o modo **demo** (demonstração, mercado inventado e acelerado, datas falsas) foi descontinuado e fica **fora dos relatórios**; contam a carteira de papel (simulação + sinais), testnet e real (pedido seu em 01/11).
 
 ## Infra
