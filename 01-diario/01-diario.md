@@ -1,6 +1,6 @@
 ---
 tipo: indice
-atualizado: 2026-11-18
+atualizado: 2026-11-19
 ---
 
 # Diário
@@ -20,3 +20,4 @@ Uma nota por dia em `AAAA/MM/AAAA-MM-DD.md` (modelo: [[diaria]]). Só recebe acr
 - 2026/11 — [[2026-11-12]]
 - 2026/11 — [[2026-11-18]]
 - 2026/11 — [[2026-11-13]]
+- 2026/11 — [[2026-11-19]]
